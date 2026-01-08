@@ -1,5 +1,4 @@
-# curl -X POST http://localhost:7071/runtime/webhooks/mcp \
-curl -X POST https://telco-mcp-func-app-fjadhdg3gjffdyh8.westus2-01.azurewebsites.net/runtime/webhooks/mcp \
+curl -X POST http://localhost:7071/runtime/webhooks/mcp \
   -H "Content-Type: application/json" \
   -H "Accept: application/json, text/event-stream" \
   -d '{
