@@ -58,7 +58,9 @@ MCP Server URI points to local Azure Function Tools Runtime.
 
 If you are targeting the Azure Function App, substitute with Function App URL.  See URI below.
 
-- https://{function-appname}.azurewebsites.net/runtime/webhooks/mcp
+```bash
+https://{function-appname}.azurewebsites.net/runtime/webhooks/mcp
+```
 
 ### Initialize Connection
 
