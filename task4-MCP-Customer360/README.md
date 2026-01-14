@@ -1,112 +1,155 @@
-# Telco Customer360 MCP Server
+# Use Case Description
 
-A fully compliant Model Context Protocol (MCP) server built in Node.js for Telco call center agent use cases. This server implements the MCP specification version **2025-11-25**, using **Streamable HTTP** transport and **JSON-RPC 2.0** message format.
+## Context
 
-## 🚀 Features
+A telecommunications company has deployed an AI agent that assists customer service representatives in answering questions using **Retrieval-Augmented Generation (RAG)** over internal knowledge bases.  
+The company wants to extend this AI agent’s capabilities to support:
 
-- ✅ MCP Protocol Version: `2025-11-25`
-- 🔧 Transport: Streamable HTTP (POST/GET)
-- 📡 Message Format: JSON-RPC 2.0
-- 🔐 API Key Authentication
-- 🧪 Mock Data for Demo Purposes
-- 🐳 Docker-Ready for Containerized Deployment
+- 360-degree customer information retrieval (view) 
+- Real-time location information  
+- Billing history access  
 
-## MCP Protocol Compliance
+These capabilities enable agents to resolve customer issues efficiently while remaining within the AI assistant conversation flow.
 
-- **Protocol Version**: 2025-11-25
-- **Transport**: Streamable HTTP
-- **Message Format**: JSON-RPC 2.0
-- **Specification**: https://modelcontextprotocol.io/specificat
+## Business Problem
 
-## 📘 MCP Endpoint
+Customer service agents require rapid, consolidated access to customer profile, geographic, and billing information while staying engaged in a single conversational interface with the AI agent.  
+Switching between multiple systems disrupts workflow and slows issue resolution.
 
-All JSON-RPC messages must be sent to the MCP endpoint
-```bash
-POST http://localhost:3000/mcp
-```
+## Solution
 
-### Required Headers
-```http
-X-API-Key: demo-api-key-12345
-Content-Type: application/json
-Accept: application/json, text/event-stream
-```
+Build an **MCP (Model Context Protocol) server** that exposes comprehensive **Customer-360 data** via standardized MCP tools.
 
-## Supported Methods
+The AI agent can invoke these tools using natural language queries such as:
 
-- initialize - Establish connection and negotiate capabilities
-- tools/list - List all available tools
-- tools/call - Invoke a specific tool
-- ping - Keepalive/health check
+- “Retrieve complete customer information for phone number xxx-xxx-xxxx and password xxxx”
+- “Retrieve billing or current location data for a customer with phone number xxx-xxx-xxxx”
 
-## 📦 Tools Exposed
+All interactions occur within the same conversational interface without navigating external systems.
 
-The server exposes three tools via JSON-RPC:
+## Value Proposition
 
-1. **get_customer_info**
+- **Faster resolution** using unified Customer-360 data via MCP tools  
+- **Reduced handle time** by eliminating system switching  
+- **Consistent experience** through validated inputs and streaming updates (SSE)  
+- **Higher agent focus** on customer engagement rather than navigation
 
-   - Retrieves customer details including name, phone lines, IMEI numbers, and billing address.  
-   Requires: `phoneNumber`, `password` (4-digit)
+## Scope & Requirements
 
-2. **get_location_info**
+Implement an MCP server prototype that exposes **three JSON-RPC 2.0 tools** over **Streamable HTTP**.  
+Each tool must implement the following functionality.
 
-   - Identifies the customer's location (city, latitude, longitude).  
-   Requires: `phoneNumber`
+## Tool 1: Get Customer Information
 
-3. **get_billing_history**
+### Purpose
+Retrieve full and complete **Customer-360** information from internal data sources.
 
-   - Retrieves billing history, payments, and credits.  
-   Requires: `phoneNumber`
+### Functionality Requirements
+- Accept a natural language search query  
+- Validate phone number and PIN  
 
-## Example Usage
+### Input Parameters
+- `phoneNumber` (string)  
+- `pinCode` (string, 4 digits)  
 
-### Initialize Connection
+### Output Structure
+Returns a complete customer profile including:
+- Name  
+- Email  
+- Phone lines  
+- IMEI(s)  
+- Billing address  
 
-```bash
-curl -X POST http://localhost:3000/mcp \
-  -H "X-API-Key: demo-api-key-12345" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json, text/event-stream" \
-  -d '{
-    "jsonrpc": "2.0",
-    "id": 1,
-    "method": "initialize",
-    "params": {}
-  }'
-```
+### Error Handling
+- Error response if incorrect phone number or PIN is provided
 
-### List Tools
+## Tool 2: Get Customer’s Current Location
 
-```bash
-curl -X POST http://localhost:3000/mcp \
-  -H "X-API-Key: demo-api-key-12345" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json, text/event-stream" \
-  -d '{
-    "jsonrpc": "2.0",
-    "id": 2,
-    "method": "tools/list",
-    "params": {}
-  }'
-```
+### Purpose
+Retrieve the customer’s real-time or last-known location.
 
-### Get Customer Info
+### Functionality Requirements
+- Accept phone number as input  
+- Return complete location information for the subscriber’s phone line  
 
-```bash
-curl -X POST http://localhost:3000/mcp \
-  -H "X-API-Key: demo-api-key-12345" \
-  -H "Content-Type: application/json" \
-  -H "Accept: application/json, text/event-stream" \
-  -d '{
-    "jsonrpc": "2.0",
-    "id": 3,
-    "method": "tools/call",
-    "params": {
-      "name": "get_customer_info",
-      "arguments": {
-        "phoneNumber": "+1-555-0001",
-        "password": "1234"
-      }
-    }
-  }'
-```
+### Input Parameters
+- `phoneNumber` (string)  
+
+### Output Structure
+Returns:
+- Phone line number  
+- State  
+- City  
+- Latitude  
+- Longitude  
+
+### Error Handling
+- Error response if phone number is invalid
+
+## Tool 3: Get Customer Billing Information
+
+### Purpose
+Retrieve the customer’s complete billing history.
+
+### Functionality Requirements
+- Accept phone number as input  
+- Return full billing details for the subscriber account  
+
+### Input Parameters
+- `phoneNumber` (string)  
+
+### Output Structure
+Returns:
+- Monthly invoices  
+- Payments  
+- Credits  
+- Current outstanding balance (if any)
+
+## Technical Requirements
+
+### Implementation
+- The MCP server can be implemented in any programming language (your choice):
+  - Python  
+  - NodeJS  
+  - Java  
+  - C#  
+- Functions/tools should be implemented as **standalone modules** for extensibility  
+- Helper functions kept internal to each module  
+- All data exchanged in **JSON format**
+
+### Mock Data Specifications
+
+- Minimum **two customers** in the mock customer database  
+- Multiple phone lines per customer  
+- Multiple historical invoices per customer  
+- Customer location data may be:
+  - Stored separately to simulate real-time data  
+  - Or stored within the same data structure  
+- Same flexibility applies to billing data
+
+### Data Structures
+
+For this hackathon, a single JSON-based data structure may be used to store:
+- Customer profile data  
+- Billing data  
+- Location data
+
+### Modularity
+
+- MCP server implemented as a **separate module**  
+- Designed as a reusable template for MCP servers across different domains  
+- Modules should remain **loosely coupled** with no hard dependencies  
+- MCP server should be easily pluggable into **Microsoft Foundry**  
+- Mock data should be easily replaceable with real backend API calls
+
+## Success Criteria
+
+### Demonstration & Integration Readiness
+
+#### End-to-End Flow
+✅ Demonstrate retrieving complete customer information  
+✅ Demonstrate retrieving customer’s current location  
+✅ Demonstrate retrieving customer billing information to answer a billing-related question  
+
+#### Integration Preparedness
+✅ Mock data clearly separated and replaceable with backend API calls
