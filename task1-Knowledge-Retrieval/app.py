@@ -90,7 +90,7 @@ def main():
             All answers include source citations from the documentation.
 
             **Tech Stack:**
-            - Azure OpenAI (GPT-4o)
+            - Azure OpenAI (GPT-5.2)
             - Azure AI Search
             - Streamlit
             """
