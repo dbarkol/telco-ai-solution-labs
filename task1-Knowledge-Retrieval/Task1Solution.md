@@ -288,8 +288,9 @@ If issues persist, contact T-Mobile support.
 
 ### Prerequisites
 - Python 3.10+
+- [uv](https://docs.astral.sh/uv/) - Fast Python package manager
 - Azure subscription with:
-  - Azure OpenAI service (with GPT-5.2 and text-embedding-ada-002 deployments)
+  - Azure OpenAI service (with GPT-4o and text-embedding-ada-002 deployments)
   - Azure AI Search service
 
 ### Setup
@@ -298,26 +299,28 @@ If issues persist, contact T-Mobile support.
 # 1. Navigate to task folder
 cd task1-Knowledge-Retrieval
 
-# 2. Create virtual environment
-python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+# 2. Create virtual environment and install dependencies with uv
+uv sync
 
-# 3. Install dependencies
-pip install -r requirements.txt
-
-# 4. Configure environment variables
+# 3. Configure environment variables
 cp .env.example .env
 # Edit .env with your Azure credentials
 
-# 5. Login to Azure (for managed identity)
+# 4. Login to Azure (for managed identity)
 az login
 
-# 6. Index the document (one-time)
-python scripts/index_document.py
+# 5. Index the document (one-time)
+uv run python scripts/index_document.py
 
-# 7. Run the application
-streamlit run app.py
+# 6. Run the application
+uv run streamlit run app.py
 ```
+
+> **Note:** If you don't have `uv` installed, you can install it with:
+> ```bash
+> curl -LsSf https://astral.sh/uv/install.sh | sh
+> ```
+> Or on macOS with Homebrew: `brew install uv`
 
 ### Environment Variables
 
