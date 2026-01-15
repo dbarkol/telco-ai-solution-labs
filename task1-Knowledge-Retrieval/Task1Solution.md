@@ -313,7 +313,7 @@ az login
 uv run python scripts/index_document.py
 
 # 6. Run the application
-uv run streamlit run app.py
+uv run python -m streamlit run app.py
 ```
 
 > **Note:** If you don't have `uv` installed, you can install it with:
